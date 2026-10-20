@@ -12,6 +12,10 @@ interface Env {
   ROOM_TTL_SECONDS: string;
   MAX_FILE_BYTES: string;
 }
+const MAX_FILE_BYTES = 10 * 1024 ** 3;
+function maxFileBytes(env: Env) {
+  return Math.min(Number(env.MAX_FILE_BYTES) || MAX_FILE_BYTES, MAX_FILE_BYTES);
+}
 type Role = "sender" | "receiver";
 interface Room {
   room: string;
@@ -81,7 +85,8 @@ export default {
     try {
       const url = new URL(request.url);
       if (url.pathname === "/health" && request.method === "GET") {
-        return json({ service: "mywormhole", protocol: 1, ready: configured(env), directR2: env.DIRECT_R2 === "true" });
+        return json({ service: "mywormhole", protocol: 1, ready: configured(env), directR2: env.DIRECT_R2 === "true",
+          maxFileBytes: maxFileBytes(env) });
       }
       if (!configured(env)) fail(503, "Deployment configuration is incomplete; see deployment guide");
       if (url.pathname === "/v1/rooms" && request.method === "POST") {
@@ -89,11 +94,11 @@ export default {
         const input = await body(request);
         if (!tokenOK(input.token)) fail(400, "Invalid sender token");
         const { fileSize, chunkSize, chunkCount } = input;
-        const maxBytes = Math.min(Number(env.MAX_FILE_BYTES) || 2147483648, 2147483648);
+        const maxBytes = maxFileBytes(env);
         if (!Number.isSafeInteger(fileSize) || (fileSize as number) < 0 || (fileSize as number) > maxBytes ||
             !Number.isSafeInteger(chunkSize) || (chunkSize as number) < 65536 || (chunkSize as number) > 33554432 ||
             !Number.isSafeInteger(chunkCount) || chunkCount !== Math.ceil((fileSize as number) / (chunkSize as number)) ||
-            (chunkCount as number) > 2048) fail(400, "Invalid file size or chunk plan (maximum 2 GiB / 2048 chunks)");
+            (chunkCount as number) > 2048) fail(400, `Invalid file size or chunk plan (maximum ${maxBytes} bytes / 2048 chunks)`);
         for (let attempt = 0; attempt < 12; attempt++) {
           // Rejection sampling avoids bias in the six-digit locator.
           let value: number;

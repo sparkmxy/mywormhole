@@ -8,7 +8,7 @@
     "R2_BUCKET_NAME": "mywormhole-transfers",
     "DIRECT_R2": "true",
     "ROOM_TTL_SECONDS": "7200",
-    "MAX_FILE_BYTES": "2147483648"
+    "MAX_FILE_BYTES": "10737418240"
   },
   "durable_objects": {
     "bindings": [{ "name": "ROOMS", "class_name": "TransferRoom" }]

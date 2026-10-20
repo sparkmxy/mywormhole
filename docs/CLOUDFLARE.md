@@ -103,6 +103,8 @@ Invoke-RestMethod 'https://mywormhole.your-subdomain.workers.dev/health'
 
 预期包含 `service: mywormhole`、`protocol: 1`、`ready: true`、`directR2: true`。`ready` 只检查配置是否齐全，R2 凭据权限是否正确仍需实际小文件传输确认。
 
+10 GiB 版本的 `/health` 还返回 `maxFileBytes: 10737418240`。从旧版升级需重新部署 Worker，并同时更新发送端和接收端 CLI；只改控制台变量无法解除旧代码中的 2 GiB 硬上限。`vars.MAX_FILE_BYTES` 可以配置更小的上限，但不能超过 10 GiB。文件以默认 16 MiB 的独立加密对象存入 R2，无需将整个文件作为单次请求上传，也不需要新增 bucket 或 migration。[R2 大小限制](https://developers.cloudflare.com/r2/platform/limits/)
+
 **无需创建 TURN 服务、Appwrite 项目或公开 R2 bucket。**
 
 ## 7. 编译并开始传输

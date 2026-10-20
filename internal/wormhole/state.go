@@ -12,6 +12,8 @@ import (
 	"unicode"
 )
 
+const maxFileBytes int64 = 10 << 30
+
 type metadata struct {
 	Name       string `json:"name"`
 	Size       int64  `json:"size"`
@@ -43,7 +45,7 @@ func (m metadata) validate() error {
 	if m.Name == "" || m.Name == "." || m.Name == ".." || strings.ContainsAny(m.Name, "/\\:\x00") || len(m.Name) > 240 {
 		return fmt.Errorf("unsafe offered filename")
 	}
-	if m.Size < 0 || m.Size > 2<<30 || m.ChunkSize < 65536 || m.ChunkSize > 32<<20 || m.ChunkCount < 0 || m.ChunkCount > 2048 ||
+	if m.Size < 0 || m.Size > maxFileBytes || m.ChunkSize < 65536 || m.ChunkSize > 32<<20 || m.ChunkCount < 0 || m.ChunkCount > 2048 ||
 		int64(m.ChunkCount) != (m.Size+m.ChunkSize-1)/m.ChunkSize {
 		return fmt.Errorf("invalid offered file size or chunk plan")
 	}

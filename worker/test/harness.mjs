@@ -14,8 +14,8 @@ export async function harness(extra = {}) {
     compatibilityDate: "2026-10-20",
     durableObjects: { ROOMS: { className: "TransferRoom", useSQLite: true } },
     r2Buckets: ["FILES"],
-    bindings: { INVITE_TOKEN: invitation, DIRECT_R2: "false", R2_BUCKET_NAME: "mywormhole-transfers",
-      ROOM_TTL_SECONDS: "7200", MAX_FILE_BYTES: "2147483648", ...extra },
+    bindings: Object.fromEntries(Object.entries({ INVITE_TOKEN: invitation, DIRECT_R2: "false", R2_BUCKET_NAME: "mywormhole-transfers",
+      ROOM_TTL_SECONDS: "7200", MAX_FILE_BYTES: "10737418240", ...extra }).filter(([, value]) => value !== undefined)),
   }));
   const origin = (await mf.ready).origin;
   const call = async (path, { method = "GET", token = sender, data, ...rest } = {}) => {

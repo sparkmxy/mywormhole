@@ -65,8 +65,8 @@ func Send(ctx context.Context, path string, options Options) error {
 	if err != nil {
 		return err
 	}
-	if !info.Mode().IsRegular() || info.Size() > 2<<30 {
-		return fmt.Errorf("send expects one regular file, up to 2 GiB")
+	if !info.Mode().IsRegular() || info.Size() > maxFileBytes {
+		return fmt.Errorf("send expects one regular file, up to 10 GiB")
 	}
 	fmt.Fprintln(options.Log, "Calculating SHA-256...")
 	hash, err := fileHash(source)

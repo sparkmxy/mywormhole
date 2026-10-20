@@ -146,7 +146,7 @@ func TestMetadataRejectsTraversalAndOversize(t *testing.T) {
 			t.Fatal("unsafe name accepted", name)
 		}
 	}
-	valid.Size = 3 << 30
+	valid.Size = 10<<30 + 1
 	if err := valid.validate(); err == nil {
 		t.Fatal("oversize accepted")
 	}
