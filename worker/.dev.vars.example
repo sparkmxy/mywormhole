@@ -1,0 +1,3 @@
+# Local development only. Never reuse this invitation token in production.
+INVITE_TOKEN=local-development-only-change-me
+DIRECT_R2=false

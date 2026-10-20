@@ -1,0 +1,12 @@
+.tools/
+.cache/
+dist/
+node_modules/
+.wrangler/
+.dev.vars
+.env
+*.part
+*.mywormhole.json
+worker/.dev.vars
+worker/.wrangler/
+coverage/
